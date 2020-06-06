@@ -14,30 +14,38 @@ const CreatePoint = () => {
 
     // states are used when we need to store data from within the component
     // whenever we use states for arrays or objects, we need to specify their types
-
+    
+    interface IBGE_UF {
+        sigla: string;
+    }
+    
+    interface IBGE_City {
+        nome: string;
+    }
+    
     interface Item {
         id: number;
         title: string;
         image_url: string;
-    }
-
-    interface IBGE_UF {
-        sigla: string;
-    }
-
-    interface IBGE_City {
-        nome: string;
-    }
-
-    const [items, setItems] = useState<Item[]>([]);
-    const [ufs, setUfs] = useState<string[]>([]);
-    const [cities, setCities] = useState<string[]>([]);
+    }    
+    
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        whatsapp: ''
+    });
 
     const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
-
+    const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+    
     const [selectedUF, setSelectedUF] = useState('0');
     const [selectedCity, setSelectedCity] = useState('0');
-    const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+    
+    const [ufs, setUfs] = useState<string[]>([]);
+    const [cities, setCities] = useState<string[]>([]);
+    
+    const [items, setItems] = useState<Item[]>([]);
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position => {
@@ -49,31 +57,44 @@ const CreatePoint = () => {
     }, []);
 
     useEffect(() => {
+        axios.get<IBGE_UF[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
+            const ufCodes = response.data.map(uf => uf.sigla);
+            
+            setUfs(ufCodes);
+        })
+    }, []);
+    
+    useEffect(() => {
+        if (selectedUF !== '0') {
+            axios
+            .get<IBGE_City[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUF}/municipios`)
+            .then(response => {
+                const cityNames = response.data.map(city => city.nome);
+                
+                setCities(cityNames);
+            })
+        }
+        return;
+    }, [selectedUF]);
+    
+    useEffect(() => {
         api.get('items').then(response => {
             setItems(response.data);
         });
     }, []);
+    
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+        const {name, value} = event.target;
 
-    useEffect(() => {
-        axios.get<IBGE_UF[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
-            const ufCodes = response.data.map(uf => uf.sigla);
+        setFormData({...formData, [name]: value});
+    };
 
-            setUfs(ufCodes);
-        })
-    }, []);
-
-    useEffect(() => {
-        if (selectedUF !== '0') {
-            axios
-                .get<IBGE_City[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUF}/municipios`)
-                .then(response => {
-                    const cityNames = response.data.map(city => city.nome);
-
-                    setCities(cityNames);
-                })
-        }
-        return;
-    }, [selectedUF]);
+    function handleMapClick(event: LeafletMouseEvent) {
+        setSelectedPosition([
+            event.latlng.lat,
+            event.latlng.lng
+        ]);
+    };
 
     function handleSelectedUF(event: ChangeEvent<HTMLSelectElement>) {
         const uf = event.target.value;
@@ -87,11 +108,16 @@ const CreatePoint = () => {
         setSelectedCity(city);
     };
 
-    function handleMapClick(event: LeafletMouseEvent) {
-        setSelectedPosition([
-            event.latlng.lat,
-            event.latlng.lng
-        ]);
+    function handleSelectedItem(id: number) {
+        const alreadySelected = selectedItems.findIndex(item => item === id);
+
+        if (alreadySelected >= 0) {
+            const filteredItems = selectedItems.filter(item => item !== id);
+
+            setSelectedItems(filteredItems);
+        } else {
+            setSelectedItems([...selectedItems, id]);
+        }
     };
 
     return (
@@ -120,6 +146,7 @@ const CreatePoint = () => {
                             type="text" 
                             name="name"
                             id="name"
+                            onChange={handleInputChange}
                         />
                     </div>
 
@@ -130,6 +157,7 @@ const CreatePoint = () => {
                                 type="email" 
                                 name="email"
                                 id="email"
+                                onChange={handleInputChange}
                             />
                         </div>
 
@@ -139,6 +167,7 @@ const CreatePoint = () => {
                                 type="text" 
                                 name="whatsapp"
                                 id="whatsapp"
+                                onChange={handleInputChange}
                             />
                         </div>
                     </div>
@@ -200,7 +229,11 @@ const CreatePoint = () => {
 
                     <ul className="items-grid">
                         {items.map(item => (
-                            <li key={item.id}>
+                            <li
+                                key={item.id}
+                                onClick={() => handleSelectedItem(item.id)}
+                                className={selectedItems.includes(item.id) ? 'selected' : ''}
+                            >
                                 <img src={item.image_url} alt={item.title}/>
                                 <span>{item.title}</span>
                             </li>
