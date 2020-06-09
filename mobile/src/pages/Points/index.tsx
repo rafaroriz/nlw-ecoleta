@@ -61,32 +61,32 @@ const Points = () => {
                     contentContainerStyle={{paddingHorizontal: 20}}    
                 >
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.item} onPress={() => {}}>
-                        <SvgUri width={42} height={42} uri="http://192.168.15.6:4440/uploads/lampadas.svg"/>
+                        <SvgUri width={42} height={42} uri="http://192.168.15.8:4440/uploads/lampadas.svg"/>
                         <Text style={styles.itemTitle}>Lâmpadas</Text>
                     </TouchableOpacity>
                 </ScrollView>
